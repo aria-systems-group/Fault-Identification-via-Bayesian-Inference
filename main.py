@@ -10,7 +10,7 @@ def cmd_parser(argv):
 	opts, args = getopt.getopt(argv,"hs:t:",["simulations=","truth="])
 	for opt, arg in opts:
 		if opt == '-h':
-			print ('test.py -s <path/to/simulations/> -t <path/to/truth/telemetry.csv>')
+			print ('main.py -s <path/to/simulations/> -t <path/to/truth/telemetry.csv>')
 			sys.exit()
 		elif opt in ("-s", "--simulations"):
 			simDir = arg

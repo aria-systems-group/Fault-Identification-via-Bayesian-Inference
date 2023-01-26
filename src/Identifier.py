@@ -6,10 +6,10 @@ from typing import List, Dict
 
 
 class Identifier:
-	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
+	def __init__(self, name: str, dim: int):
 		self.name = name
 		self.dim = dim
-		self.sim_data = sim_data
+		self.sim_data = {}
 		self.innov_hist_dict = {}
 		self.Q = np.zeros((self.dim, self.dim))
 		self.R = 0.1 * np.identity(self.dim)
@@ -17,8 +17,6 @@ class Identifier:
 		self.C = np.identity(self.dim)
 		self.innov_uncertainty_dict = {}
 		self.sphere_contains_zero = {}
-		for mode, exp_df in self.sim_data.items():
-			self.innov_hist_dict[mode] = collections.deque([])
 		self.N = 6 # adaptive window size
 		self.chi = -1
 		if self.dim == 8:
@@ -44,7 +42,7 @@ class Identifier:
 		Input: pandas.DataFrame of truth data
 		Output: A complete list of strings representing the identified mode/fault at each time step
 		"""
-
+		print("%s: Running Fault ID algorithm." %self.name)
 		for (idx, series) in truth_telem.iterrows():
 			curr_time = series.loc['Time (ns)']
 			curr_exp_meas_dict = self.get_expected_measurements(curr_time)
@@ -53,14 +51,15 @@ class Identifier:
 			self.update_innovation_uncertainty()
 			self.update_chi_squared_spheres()
 			self.determine_mode()
-			print(curr_time, self.mode_dets[-1])
+			# print(curr_time, self.mode_dets[-1])
 			# print(self.sphere_contains_zero)
+		print("%s: Fault ID complete." %self.name)
 		return self.mode_dets
 
 	def get_expected_measurements(self, time: np.float64) -> Dict[str, np.ndarray]:
 		curr_meas = {}
 		for mode, df in self.sim_data.items():
-			curr_meas[mode] = self.get_measurement(df.loc[df['Time (ns)'] == time])
+			curr_meas[mode] = self.sim_data[mode][time]
 		return curr_meas
 
 	def update_innovations(self, exp_meas_dict: Dict[str,np.ndarray], truth_meas: np.ndarray) -> None:
@@ -128,7 +127,16 @@ class CSS_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(CSS_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(CSS_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills an 8x1 numpy array with CSS measurement data """
@@ -149,7 +157,16 @@ class RW_Encoder_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(RW_Encoder_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(RW_Encoder_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 4x1 numpy array with RW measurement data """
@@ -168,7 +185,16 @@ class RW_Friction_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(RW_Friction_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(RW_Friction_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 4x1 numpy array with RW measurement data """
@@ -187,7 +213,16 @@ class Panel_Deployment_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(Panel_Deployment_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(Panel_Deployment_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 2x1 numpy array with Panel measurement data """
@@ -204,7 +239,16 @@ class Panel_Angle_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(Panel_Angle_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(Panel_Angle_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 1x1 numpy array with Panel measurement data """
@@ -222,7 +266,16 @@ class Panel_Efficiency_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(Panel_Efficiency_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(Panel_Efficiency_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 1x1 numpy array with Panel measurement data """
@@ -240,7 +293,16 @@ class Battery_Capacity_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(Battery_Capacity_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(Battery_Capacity_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 1x1 numpy array with Panel measurement data """
@@ -258,7 +320,16 @@ class Power_Sink_Fault_Identifier(Identifier):
 		- get_measurement();
 	"""
 	def __init__(self, name: str, dim: int, sim_data: Dict[str,pd.DataFrame]):
-		super(Power_Sink_Fault_Identifier, self).__init__(name, dim, sim_data)
+		super(Power_Sink_Fault_Identifier, self).__init__(name, dim)
+		print("%s: Setting up. this may take a moment..." %self.name)
+		for (key, df) in sim_data.items():
+			self.sim_data[key] = {}
+			self.innov_hist_dict[key] = collections.deque([])
+			for index, row in df.iterrows():
+				time = row['Time (ns)']
+				state = self.get_measurement(row)
+				self.sim_data[key][time] = state
+		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 1x1 numpy array with Panel measurement data """
