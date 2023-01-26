@@ -28,5 +28,7 @@ if __name__ == '__main__':
 	tester = TestManager(path2sim, path2telem)
 	# run fault ID
 	tester.run_offline_fault_ID()
+	# output the results
+	tester.export_results()
 
 

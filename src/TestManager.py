@@ -11,6 +11,7 @@ class TestManager:
 		self.sim_telem_dict = {}
 		self.__name = name
 		self.__ready = self.run_sanity_checks()
+		self.__results = {}
 
 	def run_sanity_checks(self):
 		"""
@@ -126,19 +127,17 @@ class TestManager:
 
 
 	# the main fault id function
-	def run_offline_fault_ID(self, testType="all") -> Dict[str,list[str]]:
+	def run_offline_fault_ID(self, testType="all") -> None:
 		"""
 		This is the main fault ID function. It creates the
 		required test objects and tasks each one with fault ID.
 		input: NULL
-		output: Dictionary 
+		output: None 
 		Data initialized: 
 			- sim_telem_dict
 			- truth_telem_pd
 		"""
 		assert(self.__ready is True)
-
-		results = {}
 
 		print("%s: Testing for %s faults on the telemetry data found at %s" 
 				%(self.__name, testType, self.path_to_telem))
@@ -165,7 +164,7 @@ class TestManager:
 					css_data["Nominal"] = value
 			css_tester = CSS_Fault_Identifier("CSS Fault Tester", 8, css_data)
 			css_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['CSS_ID'] = css_tester.mode_dets
+			self.__results['CSS_ID'] = css_tester.mode_dets
 
 			# 2. create rw encoder fault tester by collecting its expected data
 			rw_encode_data = {}
@@ -177,7 +176,7 @@ class TestManager:
 					rw_encode_data["Nominal"] = value
 			rw_encoder_tester = RW_Encoder_Fault_Identifier("RW Encoder Tester", 4, rw_encode_data)
 			rw_encoder_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['RW_ENCODER_ID'] = rw_encoder_tester.mode_dets
+			self.__results['RW_ENCODER_ID'] = rw_encoder_tester.mode_dets
 
 			# 3. create rw friction fault tester by collecting its expected data
 			rw_friction_data = {}
@@ -189,7 +188,7 @@ class TestManager:
 					rw_friction_data["Nominal"] = value
 			rw_friction_tester = RW_Friction_Fault_Identifier("RW Friction Tester", 4, rw_friction_data)
 			rw_friction_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['RW_FRICTION_ID'] = rw_friction_tester.mode_dets
+			self.__results['RW_FRICTION_ID'] = rw_friction_tester.mode_dets
 
 			# 4. create panel deployment fault tester by collecting its expected data
 			panel_deploy_data = {}
@@ -201,7 +200,7 @@ class TestManager:
 					panel_deploy_data["Nominal"] = value
 			panel_deployment_tester = Panel_Deployment_Fault_Identifier("Panel Deployment Tester", 2, panel_deploy_data)
 			panel_deployment_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['PANEL_DEPLOY_ID'] = panel_deployment_tester.mode_dets
+			self.__results['PANEL_DEPLOY_ID'] = panel_deployment_tester.mode_dets
 
 			# 5. create panel angle fault tester by collecting its expected data
 			panel_angle_data = {}
@@ -213,7 +212,7 @@ class TestManager:
 					panel_angle_data["Nominal"] = value
 			panel_angle_tester = Panel_Angle_Fault_Identifier("Panel Angle Tester", 1, panel_angle_data)
 			panel_angle_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['PANEL_ANGLE_ID'] = panel_angle_tester.mode_dets
+			self.__results['PANEL_ANGLE_ID'] = panel_angle_tester.mode_dets
 
 			# 6. create panel efficiency fault tester by collecting its expected data
 			panel_efficiency_data = {}
@@ -225,7 +224,7 @@ class TestManager:
 					panel_efficiency_data["Nominal"] = value
 			panel_efficiency_tester = Panel_Efficiency_Fault_Identifier("Panel Efficiency Tester", 1, panel_efficiency_data)
 			panel_efficiency_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['PANEL_EFF_ID'] = panel_efficiency_tester.mode_dets
+			self.__results['PANEL_EFF_ID'] = panel_efficiency_tester.mode_dets
 
 			# 7. create battery capacity fault tester by collecting its expected data
 			battery_capacity_data = {}
@@ -237,7 +236,7 @@ class TestManager:
 					battery_capacity_data["Nominal"] = value
 			battery_capacity_tester = Battery_Capacity_Fault_Identifier("Battery Capacity Tester", 1, battery_capacity_data)
 			battery_capacity_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['BATTERY_CAP_ID'] = battery_capacity_tester.mode_dets
+			self.__results['BATTERY_CAP_ID'] = battery_capacity_tester.mode_dets
 
 			# 8. create power sink fault tester by collecting its expected data
 			power_sink_data = {}
@@ -249,10 +248,23 @@ class TestManager:
 					power_sink_data["Nominal"] = value
 			power_sink_tester = Power_Sink_Fault_Identifier("Power Sink Tester", 1, power_sink_data)
 			power_sink_tester.run_offline_fault_ID(self.truth_telem_pd)
-			results['POWER_SINK_ID'] = power_sink_tester.mode_dets
+			self.__results['POWER_SINK_ID'] = power_sink_tester.mode_dets
 		else:
 			print("ERROR: running the tool with type %s is not yet implemented." %testType)
-		return results
+		return None
+
+	# save the results to text files
+	def export_results(self) -> None:
+		if not os.path.exists('Results/'):
+			os.mkdir('results/')
+		
+		self.__results["Time (ns)"] = self.truth_telem_pd["Time (ns)"].tolist()
+		results_df = pd.DataFrame.from_dict(self.__results)
+		results_df = results_df.set_index('Time (ns)')
+
+		example_id = self.path_to_telem.split("/")[-2]
+		results_df.to_csv("results/" + example_id + ".csv")
+		
 
 
 
@@ -263,6 +275,4 @@ class TestManager:
 
 
 
-
-			
 
