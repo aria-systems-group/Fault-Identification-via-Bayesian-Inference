@@ -94,7 +94,7 @@ class TestManager:
 	def name_panel_deployment_mode(self, dir_name: str) -> str:
 		seperated_name = dir_name.split(".")
 		value = seperated_name[-2] + "." + seperated_name[-1]
-		name = "Panel Deployment Stuck near " + value + "%"
+		name = "Panel Deployment Stuck near " + str(round((float(value)*100),1)) + "%"
 		return name
 
 	def name_panel_angle_mode(self, dir_name: str) -> str:
@@ -118,11 +118,8 @@ class TestManager:
 	def name_power_sink_mode(self, dir_name: str) -> str:
 		seperated_name = dir_name.split(".")
 		value = None
-		if "negative" in seperated_name[1]:
-			value = "-" + seperated_name[-2] + "." + seperated_name[-1]
-		else:
-			value = seperated_name[-2] + "." + seperated_name[-1]
-		name = "Panel Angle Stuck near " + value + " [rad]"
+		value = seperated_name[-2] + "." + seperated_name[-1]
+		name = "Power Sink is approximately " + str(round((float(value)*100),1)) + "\% of nominal"
 		return name
 
 

@@ -86,12 +86,13 @@ class Identifier:
 			mode_innov_mean = np.mean(mode_innov_deque, axis=0)
 			# take the Mahalanobis distance assuming zero mean
 			exp_mu = np.zeros((self.dim, 1))
-			dist = np.sqrt((exp_mu - mode_innov_mean).transpose() @ np.linalg.inv(self.innov_uncertainty_dict[mode]) @ (exp_mu - mode_innov_mean))
+			s_inv = np.diag(1/self.innov_uncertainty_dict[mode].diagonal())
+			dist = np.sqrt((exp_mu - mode_innov_mean).transpose() @ s_inv @ (exp_mu - mode_innov_mean))[0][0]
 			# determine if dist >= sqrt(chi^2 / N)
-			if mode == "Nominal":
-				dist = dist[0][0] / 0.9
-			else:
-				dist = dist[0][0] / 0.1
+			# if mode == "Nominal":
+			# 	dist = dist / 0.9
+			# else:
+			# 	dist = dist / 0.1
 			if dist <= (np.sqrt(self.chi / self.N)):
 				self.sphere_contains_zero[mode] = (True, dist)
 			else:
@@ -108,12 +109,20 @@ class Identifier:
 			self.mode_dets.append(possible_modes[0][0])
 		elif len(possible_modes) == 0:
 			self.mode_dets.append("Unknown Mode")
-		elif ("Nominal", (True, 0.0)) in possible_modes:
-			# this logic represents the situation where faults and nominal data are indistinguishable 
-			self.mode_dets.append("Nominal")
+		elif len(self.mode_dets) >= 1:
+			if (self.mode_dets[-1], (True, 0.0)) in possible_modes:
+				# this logic represents the situation where faults and nominal data are indistinguishable 
+				self.mode_dets.append(self.mode_dets[-1])
+			else:
+				# return the minimum
+				self.mode_dets.append(min(possible_modes, key=self.return_2nd_element)[0])
 		else:
-			# return the minimum
-			self.mode_dets.append(min(possible_modes, key=self.return_2nd_element)[0])
+			if ("Nominal", (True, 0.0)) in possible_modes:
+				# this logic represents the situation where faults and nominal data are indistinguishable 
+				self.mode_dets.append("Nominal")
+			else:
+				# return the minimum
+				self.mode_dets.append(min(possible_modes, key=self.return_2nd_element)[0])
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Gets the fault-specific state from a row of telemetry data """
@@ -166,6 +175,8 @@ class RW_Encoder_Fault_Identifier(Identifier):
 				time = row['Time (ns)']
 				state = self.get_measurement(row)
 				self.sim_data[key][time] = state
+		# since RW range is so large, we need to dramatically increase the noise params
+		self.R = 250 * np.identity(self.dim)
 		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
@@ -194,13 +205,21 @@ class RW_Friction_Fault_Identifier(Identifier):
 				time = row['Time (ns)']
 				state = self.get_measurement(row)
 				self.sim_data[key][time] = state
+		# this fault is VERY subtle
+		self.R = 1E-20 * np.identity(self.dim)
 		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
 		""" Fills a 4x1 numpy array with RW measurement data """
+		# state_df = telemetry[[
+		# 					'RW Omega  1 [rad/s]', 'RW Omega  2 [rad/s]',
+		# 					'RW Omega  3 [rad/s]', 'RW Omega  4 [rad/s]']]
 		state_df = telemetry[[
-							'RW Omega  1 [rad/s]', 'RW Omega  2 [rad/s]',
-							'RW Omega  3 [rad/s]', 'RW Omega  4 [rad/s]']]
+							'RW Torque  1 [Nm]', 'RW Torque  2 [Nm]',
+							'RW Torque  3 [Nm]', 'RW Torque  4 [Nm]']]
+		
+
+		
 		state = state_df.to_numpy()
 		state = np.resize(state, (self.dim,1))
 		return state
@@ -275,6 +294,7 @@ class Panel_Efficiency_Fault_Identifier(Identifier):
 				time = row['Time (ns)']
 				state = self.get_measurement(row)
 				self.sim_data[key][time] = state
+		self.R = 1E-10 * np.identity(self.dim)
 		print("%s: Set-Up Complete." %self.name)
 
 	def get_measurement(self, telemetry: pd.DataFrame) -> np.ndarray:
