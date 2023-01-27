@@ -1,0 +1,6 @@
+name: MBFID-Env
+dependencies:
+  - pip=22.3.1
+  - python=3.9.16
+  - numpy
+  - pandas
