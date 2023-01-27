@@ -743,7 +743,7 @@ if __name__ == "__main__":
 	isExist = os.path.exists("stats/")
 	if not isExist:
 		# Create a new directory because it does not exist
-		os.makedir("stats/")
+		os.mkdir("stats/")
 
 	# export the results
 	css_det_stats_total.to_csv("stats/CSS_det_stats.csv")
