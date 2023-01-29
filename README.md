@@ -8,7 +8,7 @@ The MBFID framework is built using **Python 3.9** with the following requirement
 - [Numpy](https://numpy.org/) version 1.23.5
 - [Pandas](https://pandas.pydata.org/) version 1.5.2
 
-You are welcome to install these libraries however you want. However, we provided some useful tools that will make this process very easy. 
+You are welcome to install these libraries however you want. However, we provided some useful tools that will make this process very easy.  
 **Note**: This framework **may** work with different versions. However, we have yet to test them and, thus, cannot claim to support them.
 
 ## Setup
@@ -24,20 +24,20 @@ Once you have `conda` running on your machine, create a conda environment for th
 cd Model-Based-Fault-Identification/
 conda env create -f environment.yml
 ```
-This will create a virtual environment virtual environment with all the required dependencies installed. To activate the virtual environment, run 
-`conda activate MBFID-Env`. Once you are done using it, enter `conda deactivate` to close the virtual environment. 
-**Note**: You do not need to `create` the Conda enviroment every time. Only when when the `environment.yml` is updated.
+This will create a virtual environment with all the required dependencies installed. To activate the virtual environment, run 
+`conda activate MBFID-Env`. Once you are done using it, enter `conda deactivate` to close the virtual environment.  
+**Note**: You do not need to `create` the conda environment every time. Only when the `environment.yml` is updated.
 
 ### Running the Project
 The MBFID tool requires two command line arguments to run properly. 
-1. A path to a *directory* representing the simulation database for a particular example 
-2. A path to *telemetry.csv* representing the truth telemetry data for a particular example
+1. A path to a *directory* representing the simulation database for a particular example .
+2. A path to *telemetry.csv* representing the truth telemetry data for a particular example.  
+
 Instructions for providing these requirements can be found in the help module. 
 ```
 python3 main.py --help
 ```
-
-For fun, we included two test cases in the `tests/` directory. The tests can either be ran individually by calling `main.py` **or** run all at once by running
+We included two test cases in the `tests/` directory. The tests can either be ran individually by calling `main.py` **or** ran all at once by running
 ```
 bash run_tests.sh
 ```
