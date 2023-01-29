@@ -20,9 +20,16 @@ def cmd_parser(argv: List[str]) -> Tuple[str, str]:
 	opts, args = getopt.getopt(argv,"hs:t:",["help","simulations=","truth="])
 	for opt, arg in opts:
 		if opt in ("-h", "--help"):
-			print("Run the MBFID framework by typing one of the following:")
-			print ('main.py --simulations <path/to/simulations> -truth <path/to/truth>/telemetry.csv')
-			print ('main.py -s <path/to/simulations> -t <path/to/truth>/telemetry.csv')
+			print("MBFID Help:")
+			print("-----")
+			print("Required Args:")
+			print("--simulations,-s		The path to a simulation database (e.g. <path/to/simulations>)")
+			print("--truth,-t			The path to the telemetry data. (e.g.  <path/to/truth>/telemetry.csv)")
+			print("-----")
+			print("Optional Args:")
+			print("--help,-h			Explains how to run MBFID.")
+			print("-----")
+			print("Note: if --help or -h exists in the command line arguments, the MBFID tool will not run.")
 			sys.exit()
 		elif opt in ("-s", "--simulations"):
 			sim_dir_path = arg
