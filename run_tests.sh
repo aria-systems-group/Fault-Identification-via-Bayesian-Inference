@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for file in "tests/Telemetry"/*; do
+for file in "examples/Telemetry"/*; do
     example=$(basename "$file")
-    simpath="tests/Simulations/"$example
-    testpath="tests/Telemetry/"$example"/telemetry.csv"
+    simpath="examples/Simulations/"$example
+    testpath="examples/Telemetry/"$example"/telemetry.csv"
     clear; python3 main.py -s $simpath -t $testpath
 done
