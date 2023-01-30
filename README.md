@@ -13,7 +13,7 @@ You are welcome to install these libraries however you want. However, we provide
 
 ## Setup
 ### Installing Required Packages
-You can install the [requirements](# Requirements) any way you'd like (e.g. `pip`). However, we have provided a simple way to manage this project using [Conda Environments](https://docs.conda.io/projects/conda/en/stable/). Conda is a language-agnostic virtual environment and package manager that replaces native `venv`. 
+You can install the [Requirements](#requirements) any way you'd like (e.g. `pip`). However, we have provided a simple way to manage this project using [Conda Environments](https://docs.conda.io/projects/conda/en/stable/). Conda is a language-agnostic virtual environment and package manager that replaces native `venv`. 
 #### Installing Miniconda
 If you have not done so already, install miniconda [here](https://docs.conda.io/en/latest/miniconda.html). Verify your installation succeeded by running 
 ```
