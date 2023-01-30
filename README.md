@@ -1,4 +1,4 @@
-# Model-Based Fault Identification
+# Fault-Identification via Bayesian Inference
 This Model-Based Fault Identification (MBFID) framework was designed by ARIA Systems Research as part of the AFRL STTR Research Contract. It utilizes **Bayesian Hypothesis Testing** by quantifying the uncertainty present in measurements observed by the system. The framework can identify known faults as well as detect _anomalous_ behavior (AKA unknown faults). 
 
 Although it was initially designed to identify modeled satellite faults triggered during [Basilisk](https://hanspeterschaub.info/basilisk/) simulations the implementation is general enough to be used for any dynamical system one wishes to test. All that is required by the user is a well formatted simulation database as well as truth telemetry data. See [1-2] for more details on the inner workings of the framework.
