@@ -37,7 +37,7 @@ Instructions for providing these requirements can be found in the help module.
 ```
 python3 main.py --help
 ```
-We included two test cases in the `tests/` directory. The tests can either be ran individually by calling `main.py` **or** ran all at once by running
+We included two example cases in the `examples/` directory. The examples can either be ran individually by calling `main.py` **or** ran all at once by running
 ```
 bash run_tests.sh
 ```
