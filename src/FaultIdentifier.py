@@ -80,10 +80,10 @@ class FaultIdentifier:
 			self.__update_chi_squared_spheres()
 			self.__determine_mode()
 			# Uncomment for debugging, as needed
-			# print(curr_time, self.mode_dets[-1])
-			# print(self.sphere_contains_zero)
+			# print(curr_time, self.mode_ids[-1])
+			# print(self.__sphere_contains_zero_dict)
 			# input("enter to continue")
-		print("%s: Fault ID complete." %self._name)
+		# print("%s: Fault ID complete." %self._name)
 		return self.mode_ids
 
 	def _get_measurement(self, telemetry: pd.Series) -> np.ndarray:
@@ -142,7 +142,7 @@ class FaultIdentifier:
 		also determines if the resulting ellipsoid contains the origin. The result 
 		is used for fault ID. 
 		"""
-		for mode, mode_innov_deque in self.__innov_uncertainty_dict.items():
+		for mode, mode_innov_deque in self._innov_hist_dict.items():
 			mode_innov_mean = np.mean(mode_innov_deque, axis=0)
 			# calc the Mahalanobis distance assuming zero mean
 			exp_mu = np.zeros((self._dim, 1))

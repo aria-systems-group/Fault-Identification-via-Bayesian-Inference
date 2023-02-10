@@ -625,7 +625,7 @@ if __name__ == "__main__":
 	'''
 
 	# pull all results
-	relativePath2Truth = "tests/Telemetry/"
+	relativePath2Truth = "examples/Telemetry/"
 	filenames = next(os.walk("results/"))[2]  # [] if no file
 	if ".DS_Store" in filenames:
 		filenames.remove(".DS_Store")

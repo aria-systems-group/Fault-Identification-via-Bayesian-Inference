@@ -1,4 +1,5 @@
 .DS_Store
+src/__pycache__/*
 results/*
 stats/*
 examples/Simulations/1669679428.572368/*
