@@ -1,4 +1,4 @@
-# Model-Based Fault Identification
+# Fault-Identification via Bayesian Inference
 This Model-Based Fault Identification (MBFID) framework was designed by ARIA Systems Research as part of the AFRL STTR Research Contract. It utilizes **Bayesian Hypothesis Testing** by quantifying the uncertainty present in measurements observed by the system. The framework can identify known faults as well as detect _anomalous_ behavior (AKA unknown faults). 
 
 Although it was initially designed to identify modeled satellite faults triggered during [Basilisk](https://hanspeterschaub.info/basilisk/) simulations the implementation is general enough to be used for any dynamical system one wishes to test. All that is required by the user is a well formatted simulation database as well as truth telemetry data. See [1-2] for more details on the inner workings of the framework.
@@ -13,7 +13,7 @@ You are welcome to install these libraries however you want. However, we provide
 
 ## Setup
 ### Installing Required Packages
-You can install the [requirements](# Requirements) any way you'd like (e.g. `pip`). However, we have provided a simple way to manage this project using [Conda Environments](https://docs.conda.io/projects/conda/en/stable/). Conda is a language-agnostic virtual environment and package manager that replaces native `venv`. 
+You can install the [Requirements](#requirements) any way you'd like (e.g. `pip`). However, we have provided a simple way to manage this project using [Conda Environments](https://docs.conda.io/projects/conda/en/stable/). Conda is a language-agnostic virtual environment and package manager that replaces native `venv`. 
 #### Installing Miniconda
 If you have not done so already, install miniconda [here](https://docs.conda.io/en/latest/miniconda.html). Verify your installation succeeded by running 
 ```
@@ -37,7 +37,7 @@ Instructions for providing these requirements can be found in the help module.
 ```
 python3 main.py --help
 ```
-We included two test cases in the `tests/` directory. The tests can either be ran individually by calling `main.py` **or** ran all at once by running
+We included two example cases in the `examples/` directory. The examples can either be ran individually by calling `main.py` **or** ran all at once by running
 ```
 bash run_tests.sh
 ```
