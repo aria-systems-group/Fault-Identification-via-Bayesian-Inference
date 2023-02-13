@@ -173,14 +173,16 @@ class FaultIdentifier:
 		elif len(possible_modes) == 0:
 			self.mode_ids.append("Unknown Mode") # unknown anomaly
 		elif len(self.mode_ids) >= 1:
-			if (self.mode_ids[-1], (True, 0.0)) in possible_modes:
+			val = min(possible_modes, key=self.__return_2nd_element)[1][1]
+			if (self.mode_ids[-1], (True, val)) in possible_modes:
 				# this logic represents the situation where faults and nominal data are indistinguishable 
 				self.mode_ids.append(self.mode_ids[-1])
 			else:
 				# multiple possible ID's -- return the one whose mean is closest to 0
 				self.mode_ids.append(min(possible_modes, key=self.__return_2nd_element)[0])
 		else:
-			if ("Nominal", (True, 0.0)) in possible_modes:
+			val = min(possible_modes, key=self.__return_2nd_element)[1][1]
+			if ("Nominal", (True, val)) in possible_modes:
 				# this logic represents the situation where faults and nominal data are indistinguishable 
 				self.mode_ids.append("Nominal")
 			else:
